@@ -1,8 +1,4 @@
-<div align="center">
-<p style="font-size: 48px;">Coding Style</p>
-</div>
-
----
+# Coding Style
 
 * 組合邏輯用 = (blocking)，循序邏輯用 <= (blocking)
 * sensitivity list 用 always(*)
