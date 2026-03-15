@@ -1,5 +1,5 @@
 <div align="center">
-<p style="font-size: 36px;">Coding Style</p>
+<p style="font-size: 48px;">Coding Style</p>
 </div>
 
 ---
