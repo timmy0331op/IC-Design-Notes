@@ -11,9 +11,11 @@
 * Output 也先用 FF 儲存後再送出
 * 使用 FSM 控制電路
 * 無號數運算成有號數:  
+```verilog
 wire [2:0] a,b;  
 wire signed [3:0] result;  
 assign result = $signed({1'b0, a}) - $signed({1'b0, b});  
+```
 * 運算化簡  
 乘以常數可以用 2 的冪次組合:  
 ```verilog
