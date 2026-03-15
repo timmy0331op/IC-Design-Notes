@@ -19,18 +19,18 @@ assign result = $signed({1'b0, a}) - $signed({1'b0, b});
 * 運算化簡  
 1. 乘以常數可以用 2 的冪次組合:  
 ```verilog
-assign b = a * 5;  
-assign b = (a << 2) + a;  
+(O) assign b = a * 5;  
+(X) assign b = (a << 2) + a;  
 ```
 2. 除以 2 的冪次要注意精度，可以將整個式子乘以 2 的冪次 (將最低冪次令為常數):  
 ```verilog
-assign b = (a >>> 1) + a;  
-assign bx2 = a + (a << 1); 
+(O) assign b = (a >>> 1) + a;  
+(X) assign bx2 = a + (a << 1); 
 ``` 
 3. 取 2 的冪次餘數:  
 ```verilog
-assign b = a % 16;  
-assign b = a[3:0];
+(O) assign b = a % 16;  
+(X) assign b = a[3:0];
 ```  
 4. 判斷奇偶:  
 ```verilog
