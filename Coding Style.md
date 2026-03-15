@@ -17,22 +17,22 @@ wire signed [3:0] result;
 assign result = $signed({1'b0, a}) - $signed({1'b0, b});  
 ```
 * 運算化簡  
-乘以常數可以用 2 的冪次組合:  
+1. 乘以常數可以用 2 的冪次組合:  
 ```verilog
 assign b = a * 5;  
 assign b = (a << 2) + a;  
 ```
-除以 2 的冪次要注意精度，可以將整個式子乘以 2 的冪次 (將最低冪次令為常數):  
+2. 除以 2 的冪次要注意精度，可以將整個式子乘以 2 的冪次 (將最低冪次令為常數):  
 ```verilog
 assign b = (a >>> 1) + a;  
 assign bx2 = a + (a << 1); 
 ``` 
-取 2 的冪次餘數:  
+3. 取 2 的冪次餘數:  
 ```verilog
 assign b = a % 16;  
 assign b = a[3:0];
 ```  
-判斷奇偶:  
+4. 判斷奇偶:  
 ```verilog
 assign b = a[0]; // b 為 1 的話 a 是奇數 為 0 則 a 是偶數
 ```
