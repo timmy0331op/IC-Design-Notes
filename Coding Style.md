@@ -50,26 +50,24 @@ assign b = a[0]; // b 為 1 的話 a 是奇數 為 0 則 a 是偶數
 
 * 左位移用 << 邏輯左移，右位移用 >>> 算術位移    
 
-| 算術左移 | 算術右移 | 邏輯左移 | 邏輯右移 |
-| :---: | :---: | :---: | :---: |
-| <div style="background-color:white; padding:10px; display:inline-block;"><img src="src/p1.png" width="200" style="mix-blend-mode: multiply;"></div> | <div style="background-color:white; padding:10px; display:inline-block;"><img src="src/p2.png" width="160" style="mix-blend-mode: multiply;"></div> | <div style="background-color:white; padding:10px; display:inline-block;"><img src="src/p3.png" width="200" style="mix-blend-mode: multiply;"></div> | <div style="background-color:white; padding:10px; display:inline-block;"><img src="src/p4.png" width="200" style="mix-blend-mode: multiply;"></div> |
-
 * 確保 Pipeline 資料對齊（Data Alignment）： 設計管線時務必注意各節點的資料時序。若運算路徑長度不同，最簡單的解決方式是插入 Bubble（空拍 / 延遲暫存器）來對齊資料，避免不同時序的舊資料與新資料發生誤算  
 
 * 控制與資料路徑分離（Decoupling）： FSM 與 Pipeline 必須分開設計。FSM 專職於「控制邏輯」（發號施令、驅動組合邏輯或決定資料存取），而 Pipeline 專職於「資料運算」
 
 * 狀態切換策略： 盡量避免使用「計數器」作為 FSM 狀態跳轉的條件。最佳實務是透過握手協定（Handshake）來結合 FSM 與 Pipeline，看訊號做事而非死記時間 
+https://www.youtube.com/watch?v=apFhyphecxM  
 
-| 比較項目 | 計數器 (Counter) | 握手 (HandShake) |
-| :--: | :--: | :--: |
-| 吞吐量 (Throughput) | 無法重疊（卡死）： 第一筆資料進入後，FSM 進入等待並開始倒數，期間無法接收新資料，抹殺了 Pipeline 的最大優勢。 | 完美重疊（100% 吞吐量）： 標記宛如追蹤條碼（如 [1, 1, 1]），支援每個 Clock 連續輸入，同時追蹤多筆不同階段的資料。 |
-| 維護與擴充性 | 牽一髮而動全身： 若管線級數改變（例如 2 級變 4 級），必須回頭修改 FSM 程式碼，極容易引發連鎖錯誤。 | 完美解耦（Decoupling）： FSM 只認 pipe_done 訊號，完全不知道管線有幾級。增減管線級數時，FSM 邏輯一行都不用改。 |
-| 應對下游塞車 (Stall) | 系統崩潰： 遇到下游暫停時，計數器無法記錄管線中多筆資料的具體位置（哪一級有資料、哪級是空的）。 | 從容停頓： 搭配 Ready 訊號，Valid 標記能直接停在原地（維持狀態不動），待塞車解除再繼續傳遞，資料絕不亂掉。 |  
+* 進行數值運算後的位元數，令 $A$ 的位元寬度為 $M$、$B$ 的位元寬度為 $N$
+  1. 加法 ($A + B$)所需位元數： $\max(M, N) + 1$  
+  原因： 兩個數相加時，有可能會向最高位產生進位（Carry out）。例如兩個無號 8-bit 的數相加，最大值為 $255 + 255 = 510$，需要 9 個 bits 才能完整表示。
 
-* 握手協定是確保資料在同步電路中安全傳遞的機制，主要由兩個控制訊號組成：  
+  2. 減法 ($A - B$)所需位元數： $\max(M, N) + 1$  
+  原因： 硬體中的減法通常會轉換為加上二補數（2's complement）。即使原本是無號數，相減的結果也可能為負，因此需要擴展一個位元來作為符號位元（Sign bit）並容納可能的數值範圍。
 
-      Valid（有效訊號）： 由**「發送方 (Sender)」**產生，代表送出的資料是有效、可用的。  
+  3. 乘法 ($A \times B$)所需位元數： $M + N$  
+  原因： 乘法結果的動態範圍會呈指數成長。例如一個 4-bit 的數（最大數值 15）乘上一個 3-bit 的數（最大數值 7），結果最大為 $15 \times 7 = 105$，需要 $4 + 3 = 7$ 個 bits 才能表示。
 
-      Ready（準備就緒訊號）： 由**「接收方 (Receiver)」**產生，代表接收端內部有空，已準備好接收新資料。
-
-    握手成功條件： 在同一個 Clock 上升緣（Posedge），只有當 Valid == 1 且 Ready == 1 同時成立時，握手才算成功，資料也才會真正從發送方轉移到接收方。  
+  4. 除法 ($A / B$) 商數 (Quotient) 所需位元數： $M$  
+  原因： 極端情況下，當除數 $B = 1$ 時，商數會完全等於被除數 $A$，因此商數最多需要與被除數相同的位元數。  
+  5. 餘數 (Remainder) 所需位元數： $N$  
+  原因： 餘數永遠會小於除數 $B$，因此餘數的位元寬度最多只需要與除數的位元寬度相同。
