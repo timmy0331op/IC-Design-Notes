@@ -54,8 +54,7 @@ assign b = a[0]; // b 為 1 的話 a 是奇數 為 0 則 a 是偶數
 
 * 控制與資料路徑分離（Decoupling）： FSM 與 Pipeline 必須分開設計。FSM 專職於「控制邏輯」（發號施令、驅動組合邏輯或決定資料存取），而 Pipeline 專職於「資料運算」
 
-* 狀態切換策略： 盡量避免使用「計數器」作為 FSM 狀態跳轉的條件。最佳實務是透過握手協定（Handshake）來結合 FSM 與 Pipeline，看訊號做事而非死記時間 
-https://www.youtube.com/watch?v=apFhyphecxM  
+* 狀態切換策略： 盡量避免使用「計數器」作為 FSM 狀態跳轉的條件。最佳實務是透過握手協定（Handshake）來結合 FSM 與 Pipeline，看訊號做事而非死記時間  
 
 * 進行數值運算後的位元數，令 $A$ 的位元寬度為 $M$、$B$ 的位元寬度為 $N$
   1. 加法 ($A + B$)所需位元數： $\max(M, N) + 1$  
