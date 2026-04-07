@@ -24,7 +24,38 @@
 
 * 盡量將每個訊號獨立一個 always block，之後比較好 debug 且合成器比較看得懂會更好優化
 
+* 共用元件: 如果一個加法器在不同的運算中不會同時使用，則應在 if-else 或 case 中共用同一個加法器，而非寫兩個
+
+``` verilog
+//優化前
+if (sel) out = a + b;
+else out = c + d;
+
+//優化後
+op1 = sel ? a : c;
+op2 = sel ? b : d;
+out = op1 + op2;
+```
+
 * 如果有未用到的case可以用 don’t care讓合成器更好優化電路 (高可靠除外)
+
+``` verilog
+module mux_2 (a,b,c,d,sel,out);
+    input [7:0] a,b,c,d;
+    input [1:0] sel;
+    output reg [7:0] out;
+
+always @(*) begin
+    case (sel)
+        0: out = a;
+        1: out = b;
+        2: out = c;
+        3: out = d;
+        default: out = 8'bx;
+    endcase
+end
+endmodule
+```
 
 * 若 output 為 z (high impedance) 先確認 tcl 合成檔中有加入 don't touch 的約束條件，兩個訊號等價可能會導致某一訊號被優化成 z
 
