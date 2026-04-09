@@ -24,7 +24,16 @@
 
 * 盡量將每個訊號獨立一個 always block，之後比較好 debug 且合成器比較看得懂會更好優化
 
-* 共用元件: 如果一個加法器在不同的運算中不會同時使用，則應在 if-else 或 case 中共用同一個加法器，而非寫兩個
+* 善用括號以盡量使用樹狀結構減少使用線性結構 (縮短 critical path)
+
+``` verilog
+// 線性結構 ((a + b) + c) + d;
+assign z = a + b + c + d;
+// 樹狀結構
+assign z = (a + b) + (c + d);
+```
+
+* 共用元件: 如果一個加法器在不同的運算中不會同時使用，則應在 if-else 或 case 中共用同一個加法器，而非寫兩個 (有些合成器可能會將 if-else 中的資源共用但非全然)
 
 ``` verilog
 //優化前
@@ -32,9 +41,9 @@ if (sel) out = a + b;
 else out = c + d;
 
 //優化後
-op1 = sel ? a : c;
-op2 = sel ? b : d;
-out = op1 + op2;
+assign op1 = sel ? a : c;
+assign op2 = sel ? b : d;
+assign out = op1 + op2;
 ```
 
 * 如果有未用到的case可以用 don’t care讓合成器更好優化電路 (高可靠除外)
