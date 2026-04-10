@@ -44,7 +44,7 @@ assign z = (a + b) + (c + d);
 ```
 
 * 延遲越長的 Signal 盡量放接近輸出一點，可以縮短其 Critical Path
-![example_picture](src/ex1.png)
+![example1 picture](src/ex1.png)
 
 * 共用元件: 如果一個加法器在不同的運算中不會同時使用，則應在 if-else 或 case 中共用同一個加法器，而非寫兩個 (有些合成器可能會將 if-else 中的資源共用但非全然)
 
