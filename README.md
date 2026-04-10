@@ -30,7 +30,7 @@ end
 
 * 不要訊號重複賦值 (在多個地方被賦值)
 
-* 盡量使用 FSM 控制電路
+* 如果有控制訊號盡量使用 FSM 控制電路
 
 * 盡量將每個訊號獨立一個 always block，之後比較好 Debug 且合成器比較看得懂會更好優化
 
@@ -116,22 +116,22 @@ assign result = $signed({1'b0, a}) - $signed({1'b0, b});
 1. 乘以常數可以用 2 的冪次組合:  
   
 ```verilog
-(O) assign b = a * 5;  
-(X) assign b = (a << 2) + a;  
+(X) assign b = a * 5;  
+(O) assign b = (a << 2) + a;  
 ```
 
 1. 除以 2 的冪次要注意精度，可以將整個式子乘以 2 的冪次 (將最低冪次令為常數):  
 
 ```verilog
-(O) assign b = (a >>> 1) + a;  
-(X) assign bx2 = a + (a << 1); 
+(X) assign b = (a >>> 1) + a;  
+(O) assign bx2 = a + (a << 1); 
 ```  
 
 1. 取 2 的冪次餘數:  
 
 ```verilog
-(O) assign b = a % 16;  
-(X) assign b = a[3:0];
+(X) assign b = a % 16;  
+(O) assign b = a[3:0];
 ```  
 
 1. 判斷奇偶:  
