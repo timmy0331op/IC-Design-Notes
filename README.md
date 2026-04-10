@@ -1,8 +1,18 @@
 # Coding Style
 
+* sensitivity list 用 always(*)
+
 * 組合邏輯用 = (blocking)，循序邏輯用 <= (blocking)
 
-* sensitivity list 用 always(*)
+``` verilog
+always @(*) begin
+    out = a;
+end
+
+always @(posedge clk) begin
+    out <= a;
+end
+```
 
 * 在設計電路時要盡量避免 Latch 的產生
 
@@ -12,7 +22,7 @@
 
 * Latch 只會在 Combinational 中出現
 
-* 不要使用 conditional reset 或 gated clk
+* 不要使用 Conditional reset 或 Gated clk
 
 * 不要直接拿 Input data 做運算，先用 FF 存起來，若輸入序列一筆一筆進入，用 Shift Register (FIFO or SIPO)
 
@@ -22,9 +32,9 @@
 
 * 盡量使用 FSM 控制電路
 
-* 盡量將每個訊號獨立一個 always block，之後比較好 debug 且合成器比較看得懂會更好優化
+* 盡量將每個訊號獨立一個 always block，之後比較好 Debug 且合成器比較看得懂會更好優化
 
-* 善用括號以盡量使用樹狀結構減少使用線性結構 (縮短 critical path)
+* 善用括號以盡量使用樹狀結構減少使用線性結構 (縮短 Critical Path)
 
 ``` verilog
 // 線性結構 ((a + b) + c) + d;
@@ -32,6 +42,9 @@ assign z = a + b + c + d;
 // 樹狀結構
 assign z = (a + b) + (c + d);
 ```
+
+* 延遲越長的 Signal 盡量放接近輸出一點，可以縮短其 Critical Path
+![example_picture](src/ex1.png)
 
 * 共用元件: 如果一個加法器在不同的運算中不會同時使用，則應在 if-else 或 case 中共用同一個加法器，而非寫兩個 (有些合成器可能會將 if-else 中的資源共用但非全然)
 
