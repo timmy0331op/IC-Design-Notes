@@ -2,7 +2,7 @@
 
 * sensitivity list 用 always(*)
 
-* 組合邏輯用 = (blocking)，循序邏輯用 <= (blocking)
+* 組合邏輯用 = (blocking)，循序邏輯用 <= (nonblocking)
 
 ``` verilog
 always @(*) begin
